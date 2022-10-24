@@ -1,5 +1,5 @@
 const listHelper = require("../utils/list_helper");
-const { mostBlogs } = require("../utils/list_helper");
+const { mostBlogs, mostLikes } = require("../utils/list_helper");
 
 test("dummy returns one", () => {
   const blogs = [];
@@ -176,5 +176,64 @@ describe("author with most blogs", () => {
   test("if multiple blogs are sent equals author with most blogs", () => {
     const result = mostBlogs(listOfManyBlogs);
     expect(result).toEqual({ author: "Asad Mahmood", blogs: 2 });
+  });
+});
+
+describe("author with most likes", () => {
+  const listWithOneBlog = [
+    {
+      _id: "5a422aa71b54a676234d17f8",
+      title: "Go To Statement Considered Harmful",
+      author: "Edsger W. Dijkstra",
+      url: "www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
+      likes: 5,
+      __v: 0,
+    },
+  ];
+  const listOfManyBlogs = [
+    {
+      _id: "6353888627d65a7de1f6946f",
+      title: "This is a title",
+      author: "Asad Mahmood",
+      url: "www.hoops.com",
+      likes: 10,
+      __v: 0,
+    },
+    {
+      _id: "6353b0e95f0d2db327197e4d",
+      title: "Another title",
+      author: "Asad Mahmood",
+      url: "www.hoops.com",
+      likes: 23,
+      __v: 0,
+    },
+    {
+      _id: "6353b1005f0d2db327197e4f",
+      title: "one more title",
+      author: "Another author",
+      url: "www.hoops.com",
+      likes: 48,
+      __v: 0,
+    },
+  ];
+  test("when no blog is sent, equal no author with zero likes", () => {
+    const result = mostLikes([]);
+    expect(result).toEqual({ author: "", likes: 0 });
+  });
+
+  test("when one blog is sent, equals the author and likes of that blog", () => {
+    const result = mostLikes(listWithOneBlog);
+    expect(result).toEqual({
+      author: "Edsger W. Dijkstra",
+      likes: 5,
+    });
+  });
+
+  test("when a list of blogs is sent, equals the author with most likes", () => {
+    const result = mostLikes(listOfManyBlogs);
+    expect(result).toEqual({
+      author: "Another author",
+      likes: 48,
+    });
   });
 });
