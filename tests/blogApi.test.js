@@ -27,6 +27,29 @@ describe("testing api get method", () => {
   });
 });
 
+describe("testing api post method", () => {
+  test("if a valid blog can be added", async () => {
+    const initialResponse = await api.get("/api/blogs");
+    const initialNotes = initialResponse.body;
+
+    const noteToBeTested = {
+      title: "How to work?",
+      author: "test another author",
+      url: "www.tobesearched.com",
+      likes: 7,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(noteToBeTested)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    expect(response.body).toHaveLength(initialNotes.length + 1);
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
