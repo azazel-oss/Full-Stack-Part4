@@ -7,10 +7,16 @@ router.get("/", async (request, response) => {
 });
 
 router.post("/", async (request, response) => {
-  const { likes } = request.body;
+  const { title, url, likes } = request.body;
+  if (!title || !url) {
+    return response.status(400).json({
+      message: "not valid blog request",
+    });
+  }
   if (!likes) {
     request.body.likes = 0;
   }
+
   const blog = new Blog(request.body);
   const result = await blog.save();
   response.status(201).json(result);

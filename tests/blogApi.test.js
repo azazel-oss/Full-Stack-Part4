@@ -58,6 +58,16 @@ describe("testing api post method", () => {
     const response = await api.post("/api/blogs").send(noteToBeTested);
     expect(response.body.likes).toEqual(0);
   });
+
+  test("if a blog with empty url or title is sent, returns a bad request response", async () => {
+    const noteToBeTested = {
+      title: "No url on this post",
+      author: "test another author",
+      likes: 5,
+    };
+
+    await api.post("/api/blogs").send(noteToBeTested).expect(400);
+  });
 });
 
 afterAll(() => {
