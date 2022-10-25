@@ -42,7 +42,6 @@ const mostLikes = (blogs) => {
     }
     return acc;
   }, {});
-  console.log(likesObj);
   let result = {
     author: "",
     likes: 0,
