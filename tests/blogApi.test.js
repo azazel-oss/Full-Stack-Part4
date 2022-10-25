@@ -48,6 +48,16 @@ describe("testing api post method", () => {
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(initialNotes.length + 1);
   });
+
+  test("if a blog default like value is 0 if no like property is passed", async () => {
+    const noteToBeTested = {
+      title: "No likes on this post",
+      author: "test another author",
+      url: "www.tobesearched.com",
+    };
+    const response = await api.post("/api/blogs").send(noteToBeTested);
+    expect(response.body.likes).toEqual(0);
+  });
 });
 
 afterAll(() => {
