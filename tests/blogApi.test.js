@@ -16,6 +16,15 @@ describe("testing api get method", () => {
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(1);
   });
+
+  test("blogs returned have unique property named id", async () => {
+    const response = await api.get("/api/blogs");
+    const blogs = response.body;
+    console.log(blogs);
+    blogs.forEach((blog) => {
+      expect(blog.id).toBeDefined();
+    });
+  });
 });
 
 afterAll(() => {
