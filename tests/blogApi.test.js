@@ -70,6 +70,16 @@ describe("testing api post method", () => {
   });
 });
 
+describe("testing api delete method", () => {
+  test("if delete works fine", async () => {
+    await api.delete("/api/blogs/635846f96181c41bfb584d42").expect(204);
+    const blogsResponse = await api.get("/api/blogs");
+    expect(
+      blogsResponse.body.find((blog) => blog.id === "635846f96181c41bfb584d42")
+    ).toBeUndefined();
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
