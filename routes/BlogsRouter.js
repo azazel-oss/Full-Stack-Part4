@@ -22,6 +22,16 @@ router.post("/", async (request, response) => {
   response.status(201).json(result);
 });
 
+router.put("/:id", async (request, response) => {
+  const { id } = request.params;
+  const blog = request.body;
+  const result = await Blog.findByIdAndUpdate(id, blog, { new: true });
+  response.status(200).json({
+    message: "blog updated successfully",
+    data: result,
+  });
+});
+
 router.delete("/:id", async (request, response) => {
   const { id } = request.params;
   const result = await Blog.findByIdAndDelete(id);

@@ -20,7 +20,6 @@ describe("testing api get method", () => {
   test("blogs returned have unique property named id", async () => {
     const response = await api.get("/api/blogs");
     const blogs = response.body;
-    console.log(blogs);
     blogs.forEach((blog) => {
       expect(blog.id).toBeDefined();
     });
@@ -77,6 +76,24 @@ describe("testing api delete method", () => {
     expect(
       blogsResponse.body.find((blog) => blog.id === "635846f96181c41bfb584d42")
     ).toBeUndefined();
+  });
+});
+
+describe("testing api put method", () => {
+  test("if api can update a blog post", async () => {
+    const random = Math.ceil(Math.random() * 100000);
+    const blogUpdate = {
+      id: "6357d4e1f3866f15823357d2",
+      title: "Random title" + random,
+      author: "Random author" + random,
+      url: "Random url" + random,
+      likes: random,
+    };
+    const response = await api
+      .put("/api/blogs/6357d4e1f3866f15823357d2")
+      .send(blogUpdate)
+      .expect(200);
+    expect(response.body.data).toEqual(blogUpdate);
   });
 });
 
