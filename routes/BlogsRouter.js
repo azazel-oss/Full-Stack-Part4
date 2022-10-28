@@ -10,6 +10,12 @@ router.get("/", async (request, response) => {
 
 router.post("/", async (request, response) => {
   const { title, url, likes, author } = request.body;
+  const user = request.user;
+  if (!user) {
+    return response.status(403).json({
+      error: "You need to be logged in to create a blog post",
+    });
+  }
   if (!title || !url) {
     return response.status(400).json({
       message: "not valid blog request",
@@ -18,13 +24,6 @@ router.post("/", async (request, response) => {
   if (!likes) {
     request.body.likes = 0;
   }
-
-  const token = request.token;
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: "token missing or invalid" });
-  }
-  const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({
     title,
@@ -51,14 +50,9 @@ router.put("/:id", async (request, response) => {
 
 router.delete("/:id", async (request, response) => {
   const { id } = request.params;
-  const token = request.token;
-  const decodedToken = jwt.verify(token, process.env.SECRET);
+  const user = request.user;
 
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: "token missing or invalid" });
-  }
   const blogToDelete = await Blog.findById(id);
-  const user = await User.findById(decodedToken.id);
   if (user && blogToDelete.user.toString() === user._id.toString()) {
     await Blog.findByIdAndDelete(id);
   } else {
