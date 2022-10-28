@@ -51,10 +51,23 @@ router.put("/:id", async (request, response) => {
 
 router.delete("/:id", async (request, response) => {
   const { id } = request.params;
-  const result = await Blog.findByIdAndDelete(id);
+  const token = request.token;
+  const decodedToken = jwt.verify(token, process.env.SECRET);
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: "token missing or invalid" });
+  }
+  const blogToDelete = await Blog.findById(id);
+  const user = await User.findById(decodedToken.id);
+  if (user && blogToDelete.user.toString() === user._id.toString()) {
+    await Blog.findByIdAndDelete(id);
+  } else {
+    return response.status(403).json({
+      error: "not authorised to delete this",
+    });
+  }
   response.status(204).json({
     message: "blog deleted successfully",
-    result,
   });
 });
 
