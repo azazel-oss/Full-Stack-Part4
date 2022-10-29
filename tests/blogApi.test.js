@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const api = supertest(app);
 
-describe("testing api get method", () => {
+describe("testing blog api get method", () => {
   test("blogs are returned as JSON", async () => {
     await api
       .get("/api/blogs")
@@ -26,8 +26,8 @@ describe("testing api get method", () => {
   });
 });
 
-describe("testing api post method", () => {
-  test("if a valid blog can be added", async () => {
+describe("testing blog api post method", () => {
+  test("if blog can't be added if no token is sent", async () => {
     const initialResponse = await api.get("/api/blogs");
     const initialNotes = initialResponse.body;
 
@@ -41,6 +41,31 @@ describe("testing api post method", () => {
     await api
       .post("/api/blogs")
       .send(noteToBeTested)
+      .expect(403)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    expect(response.body).toHaveLength(initialNotes.length);
+  });
+
+  test("if a valid blog can be created when token is provided", async () => {
+    const initialResponse = await api.get("/api/blogs");
+    const initialNotes = initialResponse.body;
+
+    const noteToBeTested = {
+      title: "How to work?",
+      author: "test another author",
+      url: "www.tobesearched.com",
+      likes: 7,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(noteToBeTested)
+      .set({
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRvbGxhciIsImlkIjoiNjM1Y2M3YTY3MmMzOGJiMDMxNjFmYjA5IiwiaWF0IjoxNjY3MDMwMDA3fQ.PzVsjWVgqDdRuW83KnVmLLCOMT2YG5hgGvJrEeu9kIw",
+      })
       .expect(201)
       .expect("Content-Type", /application\/json/);
 

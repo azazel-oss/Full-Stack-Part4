@@ -1,7 +1,5 @@
 const router = require("express").Router();
 const Blog = require("../models/Blog");
-const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 
 router.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { blogs: 0 });
@@ -54,7 +52,9 @@ router.delete("/:id", async (request, response) => {
 
   const blogToDelete = await Blog.findById(id);
   if (user && blogToDelete.user.toString() === user._id.toString()) {
+    user.blogs = user.blogs.filter((blog) => blog.toString() !== id);
     await Blog.findByIdAndDelete(id);
+    await user.save();
   } else {
     return response.status(403).json({
       error: "not authorised to delete this",
