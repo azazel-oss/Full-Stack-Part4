@@ -26,7 +26,7 @@ router.post("/", async (request, response) => {
   const blog = new Blog({
     title,
     url,
-    likes,
+    likes: request.body.likes,
     author,
     user: user.id,
   });
